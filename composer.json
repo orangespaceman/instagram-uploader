@@ -1,0 +1,12 @@
+{
+    "require": {
+        "mgp25/instagram-php": "v1.6.0.2",
+        "jeroen-g/flickr": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Api\\Downloader\\": "downloader/",
+            "Api\\Uploader\\": "uploader/"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+# config
+config.php
+
+# data
+data/*
+!data/.gitkeep
+
+# files
+files/*
+!files/.gitkeep
+
+# composer
+vendor
