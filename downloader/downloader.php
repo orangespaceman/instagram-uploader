@@ -137,7 +137,7 @@ class Downloader
 
   private function checkImageRatio($img)
   {
-    $maxLandscapeRatio = 1.91/1;
+    $maxLandscapeRatio = 1.8/1;
     $maxPortraitRatio = 5/4;
 
     $imageDimensions = getimagesize($img);
@@ -145,12 +145,12 @@ class Downloader
     $height = $imageDimensions[1];
 
     if ($width > $height && $width/$height > $maxLandscapeRatio) {
-      $newHeight = floor($width * $maxLandscapeRatio);
+      $newHeight = floor($width / $maxLandscapeRatio);
       $x = 0;
       $y = -floor(($newHeight - $height) / 2);
       $this->resizeImage($img, $width, $newHeight, $x, $y);
     } else if ($height > $width && $height/$width > $maxPortraitRatio) {
-      $newWidth = floor($width * $maxPortraitRatio);
+      $newWidth = floor($height / $maxPortraitRatio);
       $y = 0;
       $x = -floor(($newWidth - $width) / 2);
       $this->resizeImage($img, $newWidth, $height, $x, $y);
