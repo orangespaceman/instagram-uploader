@@ -80,7 +80,7 @@ class Downloader
     return [
       'title' => $info->photo['title']['_content'],
       'description' => $info->photo['description']['_content'],
-      'date' => date('l jS F Y, h:i:s a', $info->photo['dateuploaded']),
+      'date' => date('l jS F Y, g:i:s a', $info->photo['dateuploaded']),
       'tags' => $this->parseTags($info->photo['tags']['tag'])
     ];
   }
