@@ -27,12 +27,12 @@ class Uploader
 
     $data = $this->getData();
     if (!$data) return;
-    
+
     $image = $this->getImage($data);
     $caption = $this->getCaption($data);
 
     try {
-      if (isset($image)) {
+      if (isset($image) && !empty($image)) {
         $this->instagram->uploadPhoto($image, $caption);
       }
     } catch (Exception $e) {

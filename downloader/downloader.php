@@ -192,7 +192,7 @@ class Downloader
       'sizes' => $sizes
     ];
 
-    if (isset($img)) {
+    if (isset($img) && !empty($img)) {
       $data['img'] = $img;
     }
 
