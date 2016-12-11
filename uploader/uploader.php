@@ -10,8 +10,12 @@ class Uploader
   public function __construct($config)
   {
     $this->config = $config;
-    $this->instagram = new \InstagramAPI\Instagram($config['debug']);
-    $this->instagram->setUser($config['instagram']['username'], $config['instagram']['password']);
+  }
+
+  public function connect()
+  {
+    $this->instagram = new \InstagramAPI\Instagram($this->config['debug']);
+    $this->instagram->setUser($this->config['instagram']['username'], $this->config['instagram']['password']);
 
     try {
         $this->instagram->login();
@@ -29,14 +33,20 @@ class Uploader
     if (!$data) return;
 
     $image = $this->getImage($data);
+    $type = $this->getType($data);
     $caption = $this->getCaption($data);
 
     try {
       if (isset($image) && !empty($image)) {
-        $this->instagram->uploadPhoto($image, $caption);
+        $this->connect();
+        if ($type == "photo") {
+          $this->instagram->uploadPhoto($image, $caption);
+        } else if ($type == "video") {
+          $this->instagram->uploadVideo($image, $caption);
+        }
       }
     } catch (Exception $e) {
-        echo $e->getMessage();
+      echo $e->getMessage();
     }
 
     $this->incrementImageNumber();
@@ -63,6 +73,12 @@ class Uploader
   {
     if (!isset($data->img)) return;
     return $data->img;
+  }
+
+  private function getType($data)
+  {
+    if (!isset($data->sizes)) return;
+    return $data->sizes->media;
   }
 
   private function getCaption($data)

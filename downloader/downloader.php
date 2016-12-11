@@ -36,6 +36,8 @@ class Downloader
     if ($sizes['media'] == 'photo') {
       $img = $this->downloadImage($sizes['source']);
       $this->checkImageRatio($img);
+    } else if ($sizes['media'] == 'video') {
+      $img = $this->downloadVideo($sizes['source']);
     } else {
       $img = '';
     }
@@ -123,6 +125,32 @@ class Downloader
     $extension = explode('?', $extension)[0];
     $dest = __DIR__ . '/../files/' . $this->imageNumber . '.' . $extension;
 
+    $this->downloadFile($path, $dest);
+
+    $this->debug('downloadImage:', $dest);
+    return $dest;
+  }
+
+  private function downloadVideo($path)
+  {
+    $headers = $this->downloadFileHeaders($path);
+    $headersArray = $this->createHeadersArrayFromCurlResponse($headers);
+    if (count($headersArray) < 1) return;
+
+    $location = $headersArray[0]['Location'];
+    $filename = explode('?', $location)[0];
+    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+    $dest = __DIR__ . '/../files/' . $this->imageNumber . '.' . $extension;
+
+    $this->downloadFile($location, $dest);
+
+    $this->debug('downloadVideo:', $dest);
+    return $dest;
+  }
+
+  private function downloadFile($path, $dest)
+  {
     $ch = curl_init($path);
     $fp = fopen($dest, 'wb');
     curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -130,9 +158,36 @@ class Downloader
     curl_exec($ch);
     curl_close($ch);
     fclose($fp);
+  }
 
-    $this->debug('downloadImage:', $dest);
-    return $dest;
+  private function downloadFileHeaders($path)
+  {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $headers = curl_exec($ch);
+    curl_close($ch);
+    return $headers;
+  }
+
+  private function createHeadersArrayFromCurlResponse($headerContent)
+  {
+    $headers = array();
+    $arrRequests = explode("\r\n\r\n", $headerContent);
+    for ($index = 0; $index < count($arrRequests) -1; $index++) {
+        foreach (explode("\r\n", $arrRequests[$index]) as $i => $line)
+        {
+            if ($i === 0)
+                $headers[$index]['http_code'] = $line;
+            else
+            {
+                list ($key, $value) = explode(': ', $line);
+                $headers[$index][$key] = $value;
+            }
+        }
+    }
+    return $headers;
   }
 
   private function checkImageRatio($img)
