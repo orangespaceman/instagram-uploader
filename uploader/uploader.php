@@ -19,6 +19,7 @@ class Uploader
     try {
         $this->instagram->login($this->config['instagram']['username'], $this->config['instagram']['password']);
     } catch (Exception $e) {
+        $this->log("Login issue: " . $e->getMessage());
         echo $e->getMessage();
         exit();
     }
@@ -31,7 +32,6 @@ class Uploader
     $data = $this->getData();
     if (!$data) {
       $this->log($this->imageNumber . " - No data");
-      $this->incrementImageNumber();
       return;
     }
 
