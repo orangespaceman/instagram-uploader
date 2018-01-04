@@ -11,3 +11,6 @@ files/*
 
 # composer
 vendor
+
+# misc
+.DS_Store

@@ -4,8 +4,8 @@ namespace Api\Uploader;
 
 class Uploader
 {
-  protected $format = 'php_serial';
   protected $lastImageNumberFile = __DIR__ . '/../data/uploader-last-image.txt';
+  protected $logFile = __DIR__ . '/../data/log.txt';
 
   public function __construct($config)
   {
@@ -15,12 +15,11 @@ class Uploader
   public function connect()
   {
     $this->instagram = new \InstagramAPI\Instagram($this->config['debug']);
-    $this->instagram->setUser($this->config['instagram']['username'], $this->config['instagram']['password']);
 
     try {
-        $this->instagram->login();
+        $this->instagram->login($this->config['instagram']['username'], $this->config['instagram']['password']);
     } catch (Exception $e) {
-        $e->getMessage();
+        echo $e->getMessage();
         exit();
     }
   }
@@ -30,7 +29,11 @@ class Uploader
     $this->imageNumber = $this->getNextImageNumber();
 
     $data = $this->getData();
-    if (!$data) return;
+    if (!$data) {
+      $this->log($this->imageNumber . " - No data");
+      $this->incrementImageNumber();
+      return;
+    }
 
     $image = $this->getImage($data);
     $type = $this->getType($data);
@@ -40,13 +43,18 @@ class Uploader
       if (isset($image) && !empty($image)) {
         $this->connect();
         if ($type == "photo") {
-          $this->instagram->uploadPhoto($image, $caption);
+          $photo = new \InstagramAPI\Media\Photo\InstagramPhoto($image);
+          $this->instagram->timeline->uploadPhoto($photo->getFile(), ['caption' => $caption]);
+          $this->log($this->imageNumber . " - Image uploaded");
         } else if ($type == "video") {
-          $this->instagram->uploadVideo($image, $caption);
+          $video = new \InstagramAPI\Media\Video\InstagramVideo($image);
+          $this->instagram->timeline->uploadVideo($video->getFile(), ['caption' => $caption]);
+          $this->log($this->imageNumber . " - Video uploaded");
         }
       }
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       echo $e->getMessage();
+      $this->log($this->imageNumber . " - Error, " . $e->getMessage());
     }
 
     $this->incrementImageNumber();
@@ -136,6 +144,13 @@ class Uploader
   {
     $fp = fopen($this->lastImageNumberFile, 'w');
     fwrite($fp, $this->imageNumber);
+    fclose($fp);
+  }
+
+  private function log($log)
+  {
+    $fp = fopen($this->logFile, 'a');
+    fwrite($fp, date("Y-m-d H:i:s") . ": " .  $log . "\n");
     fclose($fp);
   }
 }
