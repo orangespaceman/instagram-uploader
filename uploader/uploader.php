@@ -31,7 +31,6 @@ class Uploader
 
     $data = $this->getData();
     if (!$data) {
-      $this->log($this->imageNumber . " - No data");
       return;
     }
 
@@ -55,6 +54,7 @@ class Uploader
     } catch (\Exception $e) {
       echo $e->getMessage();
       $this->log($this->imageNumber . " - Error, " . $e->getMessage());
+      return;
     }
 
     $this->incrementImageNumber();
