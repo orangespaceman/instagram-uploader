@@ -86,7 +86,7 @@ class Downloader
 
     return [
       'title' => $info->photo['title']['_content'],
-      'description' => $info->photo['description']['_content'],
+      'description' => strip_tags($info->photo['description']['_content']),
       'date' => date('l jS F Y, g:i:s a', strtotime($info->photo['dates']['taken'])),
       'albums' => $this->parseAlbums($albums->set),
       'tags' => $this->parseTags($info->photo['tags']['tag'])
