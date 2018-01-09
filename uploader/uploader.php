@@ -133,8 +133,12 @@ class Uploader
       $caption .= "\n";
     }
 
+    if (isset($data->info->albums)) {
+      $caption .= "\nAlbums: " . $data->info->albums;
+    }
+
     if (isset($data->info->tags)) {
-      $caption .= "\n" . $data->info->tags;
+      $caption .= "\n\nTags: " . $data->info->tags;
     }
 
     return trim($caption);

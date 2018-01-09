@@ -79,10 +79,16 @@ class Downloader
       'secret' => $photo['secret']
     ]);
 
+    $albums = $this->flickr->request('flickr.photos.getAllContexts', [
+      'photo_id' => $photo['id'],
+      'secret' => $photo['secret']
+    ]);
+
     return [
       'title' => $info->photo['title']['_content'],
       'description' => $info->photo['description']['_content'],
-      'date' => date('l jS F Y, g:i:s a', $info->photo['dateuploaded']),
+      'date' => date('l jS F Y, g:i:s a', strtotime($info->photo['dates']['taken'])),
+      'albums' => $this->parseAlbums($albums->set),
       'tags' => $this->parseTags($info->photo['tags']['tag'])
     ];
   }
@@ -267,9 +273,18 @@ class Downloader
   {
     $tagString = '';
     foreach ($tags as $tag) {
-      $tagString .= '#' . $this->camelCase($tag['raw']) . ' ';
+      $tagString .= $this->camelCase($tag['raw']) . ', ';
     }
     return trim($tagString);
+  }
+
+  private function parseAlbums($albums)
+  {
+    $albumString = '';
+    foreach ($albums as $album) {
+      $albumString .= $album['title'] . ', ';
+    }
+    return trim($albumString);
   }
 
   private function camelCase($str)
