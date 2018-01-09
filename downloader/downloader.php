@@ -275,7 +275,7 @@ class Downloader
     foreach ($tags as $tag) {
       $tagString .= $this->camelCase($tag['raw']) . ', ';
     }
-    return trim($tagString);
+    return rtrim(trim($tagString), ', ');
   }
 
   private function parseAlbums($albums)
@@ -284,7 +284,7 @@ class Downloader
     foreach ($albums as $album) {
       $albumString .= $album['title'] . ', ';
     }
-    return trim($albumString);
+    return rtrim(trim($albumString), ', ');
   }
 
   private function camelCase($str)
