@@ -29,6 +29,11 @@ composer dump-autoload -o
 
 * Register for an account, request an [API key](https://www.flickr.com/services/apps/create/), make a note of your User ID, API key and secret
 
+* If you want to use private photos, you'll also need to add an oauth key. This can be generated with the following script: 
+
+  - [http://mkelsey.com/2011/07/03/Flickr-oAuth-Python-Example/](http://mkelsey.com/2011/07/03/Flickr-oAuth-Python-Example/)
+  - [https://github.com/kelsmj/FlickrOAuth](https://github.com/kelsmj/FlickrOAuth)
+
 ### Config
 
 * duplicate the `config.sample.php` file, call the new file `config.php` and enter relevant details

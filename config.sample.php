@@ -6,6 +6,8 @@ $config = [
     "user_id" => "",
     "key" => "",
     "secret" => ""
+    "oauth_token" => "",
+    "oauth_token_secret" => "",
   ],
   "files" => [
     "path" => "files/"

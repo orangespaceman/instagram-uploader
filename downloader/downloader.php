@@ -61,6 +61,8 @@ class Downloader
   {
     $photo = $this->flickr->request('flickr.photos.search', [
       'user_id' => $this->config['flickr']['user_id'],
+      'oauth_token' => $this->config['flickr']['oauth_token'],
+      'oauth_consumer_key' => $this->config['flickr']['key'],
       'sort' => 'date-posted-asc',
       'per_page' => '1',
       'page' => $this->imageNumber,
@@ -76,12 +78,16 @@ class Downloader
   {
     $info = $this->flickr->request('flickr.photos.getInfo', [
       'photo_id' => $photo['id'],
-      'secret' => $photo['secret']
+      'secret' => $photo['secret'],
+      'oauth_token' => $this->config['flickr']['oauth_token'],
+      'oauth_consumer_key' => $this->config['flickr']['key'],
     ]);
 
     $albums = $this->flickr->request('flickr.photos.getAllContexts', [
       'photo_id' => $photo['id'],
-      'secret' => $photo['secret']
+      'secret' => $photo['secret'],
+      'oauth_token' => $this->config['flickr']['oauth_token'],
+      'oauth_consumer_key' => $this->config['flickr']['key'],
     ]);
 
     return [
@@ -97,7 +103,9 @@ class Downloader
   {
     $exif = $this->flickr->request('flickr.photos.getExif', [
       'photo_id' => $photo['id'],
-      'secret' => $photo['secret']
+      'secret' => $photo['secret'],
+      'oauth_token' => $this->config['flickr']['oauth_token'],
+      'oauth_consumer_key' => $this->config['flickr']['key'],
     ]);
 
     $data = [];
@@ -120,7 +128,9 @@ class Downloader
   {
     $sizes = $this->flickr->request('flickr.photos.getSizes', [
       'photo_id' => $photo['id'],
-      'secret' => $photo['secret']
+      'secret' => $photo['secret'],
+      'oauth_token' => $this->config['flickr']['oauth_token'],
+      'oauth_consumer_key' => $this->config['flickr']['key'],
     ]);
     return @end($sizes->sizes['size']);
   }
