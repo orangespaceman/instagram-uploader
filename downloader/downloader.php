@@ -214,21 +214,36 @@ class Downloader
     $imageDimensions = getimagesize($img);
     $width = $imageDimensions[0];
     $height = $imageDimensions[1];
+    $rotation = 0;
+
+    $exif = exif_read_data($img);
+    if(!empty($exif['Orientation']) &&
+      ($exif['Orientation'] === 6 || $exif['Orientation'] === 8)) {
+      $width = $imageDimensions[1];
+      $height = $imageDimensions[0];
+
+      if ($exif['Orientation'] === 6) {
+        $rotation = 270;
+      }
+      if ($exif['Orientation'] === 8) {
+        $rotation = 90;
+      }
+    }
 
     if ($width > $height && $width/$height > $maxLandscapeRatio) {
       $newHeight = floor($width / $maxLandscapeRatio);
       $x = 0;
       $y = -floor(($newHeight - $height) / 2);
-      $this->resizeImage($img, $width, $newHeight, $x, $y);
+      $this->resizeImage($img, $width, $newHeight, $x, $y, $rotation);
     } else if ($height > $width && $height/$width > $maxPortraitRatio) {
       $newWidth = floor($height / $maxPortraitRatio);
       $y = 0;
       $x = -floor(($newWidth - $width) / 2);
-      $this->resizeImage($img, $newWidth, $height, $x, $y);
+      $this->resizeImage($img, $newWidth, $height, $x, $y, $rotation);
     }
   }
 
-  private function resizeImage($img, $width, $height, $x, $y)
+  private function resizeImage($img, $width, $height, $x, $y, $rotation)
   {
     $pathinfo = pathinfo($img);
 
@@ -247,7 +262,8 @@ class Downloader
     $tmp = imagecreatetruecolor($width, $height);
     $backgroundColor = imagecolorallocate($tmp, 255, 255, 255);
     imagefill($tmp, 0, 0, $backgroundColor);
-    imagecopyresampled($tmp, $src, 0, 0, $x, $y, $width, $height, $width, $height);
+    $rotatedSrc = imagerotate($src, $rotation, 0);
+    imagecopyresampled($tmp, $rotatedSrc, 0, 0, $x, $y, $width, $height, $width, $height);
     imagejpeg($tmp, $img, 100);
     imagedestroy($src);
     imagedestroy($tmp);

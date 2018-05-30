@@ -5,7 +5,7 @@ $config = [
   "flickr" => [
     "user_id" => "",
     "key" => "",
-    "secret" => ""
+    "secret" => "",
     "oauth_token" => "",
     "oauth_token_secret" => "",
   ],
