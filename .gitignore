@@ -12,5 +12,9 @@ files/*
 # composer
 vendor
 
+# node
+uploader-js/node_modules
+uploader-js/config.json
+
 # misc
 .DS_Store
