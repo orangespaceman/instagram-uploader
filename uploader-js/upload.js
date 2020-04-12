@@ -68,7 +68,6 @@ async function getData(nextImageNumber) {
     if (!data) return;
     return JSON.parse(data);
   } catch (e) {
-    log(e.message);
     return;
   }
 }
