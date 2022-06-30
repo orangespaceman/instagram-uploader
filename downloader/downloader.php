@@ -65,6 +65,7 @@ class Downloader
       'oauth_consumer_key' => $this->config['flickr']['key'],
       'sort' => 'date-posted-asc',
       'per_page' => '1',
+      'tags' => '#insta',
       'page' => $this->imageNumber,
     ]);
     if (($this->imageNumber) > $photo->photos['total']) {
